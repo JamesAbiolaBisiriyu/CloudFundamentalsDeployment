@@ -3,6 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const TodoModel = require("./models/Todo");
+const path = require("path");
 
 const app = express();
 app.use(cors());
@@ -49,6 +50,14 @@ async function startServer() {
     await mongoose.connect(MONGODB_URI, {
       serverSelectionTimeoutMS: 10000,
     });
+
+
+    // production build
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
